@@ -1,0 +1,6 @@
+---
+published: true
+title: Проверка
+layout: post
+---
+тестовый пост
