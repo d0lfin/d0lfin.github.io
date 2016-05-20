@@ -4,7 +4,7 @@ title: Автоматическое тестирование обновлени�
 tags: [android, test, emulator]
 ---
 
-``(bash)
+```sh
 #!/system/bin/sh
 recurse() {
  for i in "$3"/*;do
@@ -22,4 +22,4 @@ recurse() {
  done
 }
 recurse $1 $2 $3
-``
+```
