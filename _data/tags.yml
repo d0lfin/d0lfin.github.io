@@ -1,0 +1,17 @@
+- slug: android
+  name: android
+
+- slug: test
+  name: тестирование
+
+- slug: emulator
+  name: эмуляторы
+
+- slug: java
+  name: java
+
+- slug: guitar
+  name: гитара
+
+- slug: photo
+  name: фото
