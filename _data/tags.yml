@@ -17,4 +17,10 @@
   name: фото
 
 - slug: data_structure
-  name: структуры данных 
+  name: структуры данных
+
+- slug: ubuntu
+  name: ubuntu
+
+- slug: ssh
+  name: ssh
