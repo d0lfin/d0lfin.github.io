@@ -24,3 +24,6 @@
 
 - slug: ssh
   name: ssh
+
+- slug: docker
+  name: docker
