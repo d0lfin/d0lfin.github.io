@@ -27,3 +27,6 @@
 
 - slug: docker
   name: docker
+
+- slug: selenium
+  name: selenium
