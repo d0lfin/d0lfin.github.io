@@ -30,3 +30,6 @@
 
 - slug: selenium
   name: selenium
+
+- slug: appium
+  name: appium
