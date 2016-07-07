@@ -33,3 +33,6 @@
 
 - slug: appium
   name: appium
+
+- slug: javascript
+  name: javascript
