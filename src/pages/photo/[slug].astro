@@ -1,0 +1,67 @@
+---
+import { getCollection, getEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const photos = await getCollection("photos");
+  return photos.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const manifest = await getEntry("photoManifests", entry.data.manifest);
+
+if (!manifest) {
+  throw new Error(`Missing photo manifest: ${entry.data.manifest}`);
+}
+
+const { Content } = await entry.render();
+---
+
+<Layout pageTitle={`${entry.data.title} | Photo`}>
+  <p><a href="/">Home</a></p>
+  <h1>{entry.data.title}</h1>
+  <p>{entry.data.date.toISOString().slice(0, 10)} • {entry.data.location ?? "Unknown location"}</p>
+
+  <figure>
+    <img src={entry.data.cover} alt={entry.data.title} loading="eager" decoding="async" />
+  </figure>
+
+  <h2>Frames</h2>
+  {
+    manifest.data.images.map((image) => (
+      <figure>
+        <img src={image.path} alt={image.description ?? entry.data.title} loading="lazy" decoding="async" />
+        {image.description && <figcaption>{image.description}</figcaption>}
+      </figure>
+    ))
+  }
+
+  <ul>
+    {entry.data.camera && <li>Camera: {entry.data.camera}</li>}
+    {entry.data.lens && <li>Lens: {entry.data.lens}</li>}
+    {entry.data.description && <li>Description: {entry.data.description}</li>}
+  </ul>
+
+  <Content />
+</Layout>
+
+<style>
+  figure {
+    margin: 0 0 16px;
+  }
+
+  img {
+    width: 100%;
+    max-width: 900px;
+    border-radius: 10px;
+    display: block;
+  }
+
+  figcaption {
+    margin-top: 8px;
+    color: #374151;
+  }
+</style>

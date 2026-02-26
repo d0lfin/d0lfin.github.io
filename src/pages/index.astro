@@ -1,11 +1,46 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const photos = (await getCollection("photos")).sort(
+	(a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+	(a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
 ---
 
-<Layout>
-	<Welcome />
+<Layout pageTitle="Home | d0lfin photo blog">
+	<h1>d0lfin photo blog</h1>
+	<p>Stage 3 baseline: content collections, slug routes, and sample entries are active.</p>
+
+	<section>
+		<h2>Latest Photos</h2>
+		<ul>
+			{
+				photos.map((photo) => (
+					<li>
+						<a href={`/photo/${photo.slug}/`}>{photo.data.title}</a>
+						{" • "}
+						<small>{photo.data.date.toISOString().slice(0, 10)}</small>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<section>
+		<h2>Latest Blog Notes</h2>
+		<ul>
+			{
+				posts.map((post) => (
+					<li>
+						<a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+						{" • "}
+						<small>{post.data.date.toISOString().slice(0, 10)}</small>
+					</li>
+				))
+			}
+		</ul>
+	</section>
 </Layout>

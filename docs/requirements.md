@@ -47,6 +47,8 @@
 
 ## 8) TODO/Decision
 - Decision: финальный стек подтвержден: `Astro + Markdown/MDX`.
+- Decision: структура контента для фото: `src/content/photos/*.md`, файлы изображений в `public/photos/*`.
+- Decision: описание фото хранится отдельно в manifest-файлах `src/content/photoManifests/*.json` как маппинг `path -> description`.
 - TODO/Decision: выбрать точные шрифты (заголовки/текст) и способ их загрузки.
 - TODO/Decision: выбрать акцентный цвет и правила состояний hover/focus/active.
 - TODO/Decision: определить формат URL для фото (`/photo/[slug]` или `/gallery/[slug]`).

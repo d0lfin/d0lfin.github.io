@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Baker Beach Dawn">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8d39d" />
+      <stop offset="60%" stop-color="#f4b99e" />
+      <stop offset="100%" stop-color="#8aa0b8" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#sky)" />
+  <rect y="520" width="1200" height="280" fill="#5f7385" />
+  <path d="M0,620 C260,570 500,660 760,610 C950,570 1090,600 1200,580 L1200,800 L0,800 Z" fill="#3e505f" />
+  <circle cx="900" cy="180" r="62" fill="#ffe7ba" />
+</svg>
