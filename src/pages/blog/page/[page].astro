@@ -1,0 +1,81 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getBlogPageUrl, getPublishedPosts, getTagGroups, paginatePosts } from "../../../lib/blog";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const pages = paginatePosts(posts).filter((page) => page.page > 1);
+  return pages.map((pageData) => ({
+    params: { page: String(pageData.page) },
+    props: { pageData },
+  }));
+}
+
+const { pageData } = Astro.props;
+const tags = getTagGroups(await getPublishedPosts());
+---
+
+<Layout pageTitle={`Blog Page ${pageData.page} | d0lfin photo blog`}>
+  <p>
+    <a href="/">Home</a>
+    {" • "}
+    <a href="/blog/">Blog</a>
+  </p>
+  <h1>Blog</h1>
+  <p>Page {pageData.page} of {pageData.totalPages}</p>
+
+  {tags.length > 0 && (
+    <p>
+      Tags:
+      {" "}
+      {tags.map((tag, index) => (
+        <>
+          {index > 0 && " • "}
+          <a href={`/blog/tag/${tag.slug}/`}>{tag.label}</a>
+        </>
+      ))}
+    </p>
+  )}
+
+  <section>
+    {pageData.items.map((post) => (
+      <article>
+        <h2><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h2>
+        <p>{post.data.date.toISOString().slice(0, 10)}</p>
+        <p>{post.data.summary}</p>
+        <p>
+          {post.data.tags.map((tag, index) => (
+            <>
+              {index > 0 && " • "}
+              <a href={`/blog/tag/${tag.toLowerCase().replace(/[^a-z0-9]+/g, "-")}/`}>{tag}</a>
+            </>
+          ))}
+        </p>
+      </article>
+    ))}
+  </section>
+
+  <nav class="pager">
+    {Array.from({ length: pageData.totalPages }, (_, index) => index + 1).map((page) => (
+      page === pageData.page ? (
+        <strong>{page}</strong>
+      ) : (
+        <a href={getBlogPageUrl(page)}>{page}</a>
+      )
+    ))}
+  </nav>
+</Layout>
+
+<style>
+  article {
+    margin-bottom: 26px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .pager {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+</style>

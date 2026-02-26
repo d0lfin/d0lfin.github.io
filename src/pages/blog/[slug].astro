@@ -15,10 +15,24 @@ const { Content } = await entry.render();
 ---
 
 <Layout pageTitle={`${entry.data.title} | Blog`} description={entry.data.summary}>
-  <p><a href="/">Home</a></p>
+  <p>
+    <a href="/">Home</a>
+    {" • "}
+    <a href="/blog/">Blog</a>
+  </p>
   <h1>{entry.data.title}</h1>
   <p>{entry.data.date.toISOString().slice(0, 10)}</p>
   <p>{entry.data.summary}</p>
+  {entry.data.tags.length > 0 && (
+    <p>
+      {entry.data.tags.map((tag, index) => (
+        <>
+          {index > 0 && " • "}
+          <a href={`/blog/tag/${tag.toLowerCase().replace(/[^a-z0-9]+/g, "-")}/`}>{tag}</a>
+        </>
+      ))}
+    </p>
+  )}
 
   {entry.data.hero && (
     <p>

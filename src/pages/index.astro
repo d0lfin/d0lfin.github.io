@@ -33,6 +33,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
 
 	<section>
 		<h2>Latest Blog Notes</h2>
+		<p><a href="/blog/">Open blog</a></p>
 		<ul>
 			{
 				posts.map((post) => (

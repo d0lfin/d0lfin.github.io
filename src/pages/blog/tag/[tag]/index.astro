@@ -1,0 +1,68 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+import { getPublishedPosts, getTagGroups, getTagPageUrl, paginatePosts } from "../../../../lib/blog";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const groups = getTagGroups(posts);
+
+  return groups.map((group) => {
+    const pageData = paginatePosts(group.posts)[0];
+    return {
+      params: { tag: group.slug },
+      props: {
+        tagSlug: group.slug,
+        tagLabel: group.label,
+        pageData,
+      },
+    };
+  });
+}
+
+const { tagSlug, tagLabel, pageData } = Astro.props;
+---
+
+<Layout pageTitle={`${tagLabel} | Blog Tag`}>
+  <p>
+    <a href="/">Home</a>
+    {" • "}
+    <a href="/blog/">Blog</a>
+  </p>
+  <h1>Tag: {tagLabel}</h1>
+
+  <section>
+    {pageData.items.map((post) => (
+      <article>
+        <h2><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h2>
+        <p>{post.data.date.toISOString().slice(0, 10)}</p>
+        <p>{post.data.summary}</p>
+      </article>
+    ))}
+  </section>
+
+  {pageData.totalPages > 1 && (
+    <nav class="pager">
+      {Array.from({ length: pageData.totalPages }, (_, index) => index + 1).map((page) => (
+        page === pageData.page ? (
+          <strong>{page}</strong>
+        ) : (
+          <a href={getTagPageUrl(tagSlug, page)}>{page}</a>
+        )
+      ))}
+    </nav>
+  )}
+</Layout>
+
+<style>
+  article {
+    margin-bottom: 26px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .pager {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+</style>
