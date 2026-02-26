@@ -46,7 +46,7 @@
 - Деплой: полностью автоматический через GitHub Actions на GitHub Pages.
 
 ## 8) TODO/Decision
-- TODO/Decision: финальный стек (Astro + MDX или альтернатива) подтвердить перед Этапом 2.
+- Decision: финальный стек подтвержден: `Astro + Markdown/MDX`.
 - TODO/Decision: выбрать точные шрифты (заголовки/текст) и способ их загрузки.
 - TODO/Decision: выбрать акцентный цвет и правила состояний hover/focus/active.
 - TODO/Decision: определить формат URL для фото (`/photo/[slug]` или `/gallery/[slug]`).
