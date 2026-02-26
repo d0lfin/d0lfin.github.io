@@ -66,3 +66,4 @@ Notes:
 - During GitHub Actions, a separate preview step generates compressed/resized webp files for display.
 - Pages use generated previews for viewing and keep links to original files for full-size open/download.
 - EXIF date/camera/lens are extracted automatically during `npm run build` (including GitHub Actions).
+- Technical pages are generated at build time: `/sitemap.xml`, `/robots.txt`, `/rss.xml`, `/404.html`.

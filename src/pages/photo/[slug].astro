@@ -19,7 +19,13 @@ const cameraLabel = [photo.cameraMake, photo.cameraModel].filter(Boolean).join("
 const hasExifMetadata = Boolean(photo.capturedAt || cameraLabel || photo.lensModel);
 ---
 
-<Layout pageTitle={`${photo.title} | Photo`}>
+<Layout
+  pageTitle={`${photo.title} | Photo`}
+  description={photo.description ?? `Photo from ${photo.seriesLabel}`}
+  canonicalPath={`/photo/${photo.slug}/`}
+  ogImage={photo.previewSrc ?? photo.src}
+  ogType="article"
+>
   <p>
     <a href="/">Home</a>
     {" • "}

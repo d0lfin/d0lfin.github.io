@@ -14,7 +14,13 @@ const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
 
-<Layout pageTitle={`${entry.data.title} | Blog`} description={entry.data.summary}>
+<Layout
+  pageTitle={`${entry.data.title} | Blog`}
+  description={entry.data.summary}
+  canonicalPath={`/blog/${entry.slug}/`}
+  ogImage={entry.data.hero}
+  ogType="article"
+>
   <p>
     <a href="/">Home</a>
     {" • "}

@@ -30,7 +30,7 @@ export async function getStaticPaths() {
 const { tagSlug, tagLabel, pageData } = Astro.props;
 ---
 
-<Layout pageTitle={`${tagLabel} Page ${pageData.page} | Blog Tag`}>
+<Layout pageTitle={`${tagLabel} Page ${pageData.page} | Blog Tag`} canonicalPath={getTagPageUrl(tagSlug, pageData.page)}>
   <p>
     <a href="/">Home</a>
     {" • "}

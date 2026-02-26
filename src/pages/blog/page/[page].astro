@@ -15,7 +15,7 @@ const { pageData } = Astro.props;
 const tags = getTagGroups(await getPublishedPosts());
 ---
 
-<Layout pageTitle={`Blog Page ${pageData.page} | d0lfin photo blog`}>
+<Layout pageTitle={`Blog Page ${pageData.page} | d0lfin photo blog`} canonicalPath={getBlogPageUrl(pageData.page)}>
   <p>
     <a href="/">Home</a>
     {" • "}

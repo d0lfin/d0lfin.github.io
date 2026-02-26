@@ -15,7 +15,7 @@ const { series } = Astro.props;
 const photos = getAllPhotos().filter((photo) => photo.seriesSlug === series.slug);
 ---
 
-<Layout pageTitle={`${series.label} | Gallery`}>
+<Layout pageTitle={`${series.label} | Gallery`} canonicalPath={`/gallery/${series.slug}/`}>
   <p>
     <a href="/">Home</a>
     {" • "}

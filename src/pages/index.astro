@@ -9,7 +9,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
 );
 ---
 
-<Layout pageTitle="Home | d0lfin photo blog">
+<Layout pageTitle="Home | d0lfin photo blog" canonicalPath="/">
 	<h1>d0lfin photo blog</h1>
 	<p>Drop files into <code>public/photos/...</code> and they are published automatically.</p>
 	<p><a href="/gallery/">Open gallery</a></p>
