@@ -3,6 +3,9 @@ dist/
 
 # generated types
 .astro/
+src/generated/photo-metadata.json
+src/generated/photo-previews.json
+public/generated/photos/
 
 # dependencies
 node_modules/

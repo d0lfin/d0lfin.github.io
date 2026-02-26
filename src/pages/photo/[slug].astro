@@ -11,18 +11,39 @@ export async function getStaticPaths() {
 }
 
 const { photo } = Astro.props;
+const cameraLabel = [photo.cameraMake, photo.cameraModel].filter(Boolean).join(" ");
+const hasExifMetadata = Boolean(photo.capturedAt || cameraLabel || photo.lensModel);
 ---
 
 <Layout pageTitle={`${photo.title} | Photo`}>
   <p><a href="/">Home</a></p>
   <h1>{photo.title}</h1>
   <p>{photo.relativePath}</p>
+  {hasExifMetadata && (
+    <ul>
+      {photo.capturedAt && <li>Taken: {photo.capturedAt.slice(0, 10)}</li>}
+      {cameraLabel && <li>Camera: {cameraLabel}</li>}
+      {photo.lensModel && <li>Lens: {photo.lensModel}</li>}
+    </ul>
+  )}
 
   <figure>
-    <img src={photo.src} alt={photo.description ?? photo.title} loading="eager" decoding="async" />
+    <a href={photo.src} target="_blank" rel="noreferrer">
+      <img
+        src={photo.previewSrc ?? photo.src}
+        alt={photo.description ?? photo.title}
+        loading="eager"
+        decoding="async"
+      />
+    </a>
   </figure>
 
   {photo.description && <p>{photo.description}</p>}
+  <p>
+    <a href={photo.src} download>Download original</a>
+    {" • "}
+    <a href={photo.src} target="_blank" rel="noreferrer">Open original</a>
+  </p>
 </Layout>
 
 <style>

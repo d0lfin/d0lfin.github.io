@@ -21,7 +21,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
 					<li>
 						<a href={`/photo/${photo.slug}/`}>{photo.title}</a>
 						{" • "}
-						<small>{photo.relativePath}</small>
+						<small>{photo.capturedAt ? photo.capturedAt.slice(0, 10) : photo.relativePath}</small>
 					</li>
 				))
 			}

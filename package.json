@@ -4,13 +4,17 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "photo:previews": "node scripts/generate-photo-previews.mjs",
+    "photo:metadata": "node scripts/generate-photo-metadata.mjs",
+    "build": "npm run photo:metadata && astro build",
     "preview": "astro preview",
     "lint": "astro check",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
-    "astro": "^5.17.1"
+    "astro": "^5.17.1",
+    "exifr": "^7.1.3",
+    "sharp": "^0.34.4"
   }
 }
