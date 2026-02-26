@@ -12,10 +12,9 @@ Photo-first personal site on Astro + MDX.
 
 ## Content Structure
 
-- Photo entries: `src/content/photos/*.md`
 - Blog entries: `src/content/blog/*.md`
-- Photo manifests (path -> description): `src/content/photoManifests/*.json`
 - Public photo files: `public/photos/<year>/<month>/<series>/*`
+- Optional description files: `public/photos/**/descriptions.json` (map `path -> description`)
 
 ## Photo Add Workflow (Commit-Only)
 
@@ -26,22 +25,17 @@ public/photos/2026/02/baker-beach/dawn-wide.jpg
 public/photos/2026/02/baker-beach/surfline.jpg
 ```
 
-2. Create or update a manifest file with path-to-description mapping:
+2. Optional: create or update `descriptions.json` near those files:
 
 ```json
 {
-  "images": [
-    {
-      "path": "/photos/2026/02/baker-beach/dawn-wide.jpg",
-      "description": "Golden light and low tide at sunrise."
-    },
-    {
-      "path": "/photos/2026/02/baker-beach/surfline.jpg",
-      "description": "Foam lines moving toward the rocks."
-    }
-  ]
+  "/photos/2026/02/baker-beach/dawn-wide.jpg": "Golden light and low tide at sunrise.",
+  "/photos/2026/02/baker-beach/surfline.jpg": "Foam lines moving toward the rocks."
 }
 ```
 
-3. Add a photo entry in `src/content/photos/<slug>.md` and point `cover` and `manifest` to those files.
-4. Commit and push to `master`.
+3. Commit and push to `master`.
+
+Notes:
+- Description is optional. If there is no `descriptions.json`, the photo is still published.
+- New photo pages are generated automatically from file paths.
