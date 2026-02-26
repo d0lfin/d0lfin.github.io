@@ -6,72 +6,78 @@ const photos = getAllPhotos();
 const seriesList = getSeriesList(photos);
 ---
 
-<Layout pageTitle="Gallery | d0lfin photo blog" canonicalPath="/gallery/">
-  <p><a href="/">Home</a></p>
-  <h1>Gallery</h1>
-  <p>Filter by series:</p>
-  <ul class="series-list">
-    {seriesList.map((series) => (
-      <li><a href={`/gallery/${series.slug}/`}>{series.label} ({series.count})</a></li>
-    ))}
-  </ul>
+<Layout
+  pageTitle="Gallery | Alexey Emelin"
+  description="Visual archive grouped by series."
+  canonicalPath="/gallery/"
+>
+  <section class="page-intro card-panel" data-animate>
+    <p class="breadcrumbs">
+      <a href="/">Home</a>
+      <span>/</span>
+      <span>Gallery</span>
+    </p>
+    <p class="page-kicker">Archive</p>
+    <h1>Gallery</h1>
+    <p class="page-lead">
+      A clean visual index grouped by series. Each item opens on its own page with metadata and original download.
+    </p>
+    <div class="chip-row">
+      {seriesList.map((series) => (
+        <a class="chip" href={`/gallery/${series.slug}/`}>
+          {series.label} ({series.count})
+        </a>
+      ))}
+    </div>
+  </section>
 
-  {seriesList.map((series) => (
-    <section id={series.slug}>
-      <h2>{series.label}</h2>
-      <p><a href={`/gallery/${series.slug}/`}>Open series page</a></p>
-      <div class="grid">
-        {photos
-          .filter((photo) => photo.seriesSlug === series.slug)
-          .map((photo) => (
-            <a class="card" href={`/photo/${photo.slug}/`}>
-              <img
-                src={photo.previewSrc ?? photo.src}
-                alt={photo.description ?? photo.title}
-                loading="lazy"
-                decoding="async"
-              />
-              <span>{photo.title}</span>
-            </a>
-          ))}
-      </div>
-    </section>
-  ))}
+  <section class="section-block" data-animate>
+    <div class="section-head">
+      <h2>Recently Added</h2>
+      <p class="meta-line"><span>{photos.length}</span><span>items in total</span></p>
+    </div>
+    <div class="mag-grid">
+      {photos.slice(0, 24).map((photo) => (
+        <a class="photo-card" href={`/photo/${photo.slug}/`}>
+          <img
+            src={photo.previewSrc ?? photo.src}
+            alt={photo.description ?? photo.title}
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="photo-card-title">{photo.title}</span>
+          <span class="meta-line">
+            <span>{photo.seriesLabel}</span>
+            <span>•</span>
+            <span>{photo.capturedAt ? photo.capturedAt.slice(0, 10) : photo.relativePath}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section-block" data-animate>
+    <div class="section-head">
+      <h2>Series</h2>
+      <p class="meta-line">Open a dedicated stream</p>
+    </div>
+    <div class="mag-grid">
+      {seriesList.map((series) => (
+        <a class="photo-card" href={`/gallery/${series.slug}/`}>
+          <img
+            src={series.coverPhoto.previewSrc ?? series.coverPhoto.src}
+            alt={series.coverPhoto.description ?? series.label}
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="photo-card-title">{series.label}</span>
+          <span class="meta-line">
+            <span>{series.count} items</span>
+            <span>•</span>
+            <span>Open series</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
 </Layout>
-
-<style>
-  .series-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 14px;
-    padding-left: 0;
-    list-style: none;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .card {
-    color: inherit;
-    text-decoration: none;
-    display: block;
-  }
-
-  .card img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 8px;
-    display: block;
-  }
-
-  .card span {
-    display: block;
-    margin-top: 6px;
-    font-size: 14px;
-  }
-</style>

@@ -1,0 +1,24 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout pageTitle="About | Alexey Emelin" description="About this site." canonicalPath="/about/">
+  <section class="page-intro card-panel" data-animate>
+    <p class="page-kicker">About</p>
+    <h1>Blog Alexey Emelin</h1>
+    <p class="page-lead">
+      Personal publishing space with a minimal structure: gallery entries and short markdown notes.
+    </p>
+  </section>
+
+  <section class="card-panel" data-animate>
+    <h2>How It Is Updated</h2>
+    <p>
+      Files in <code>public/photos/&lt;year&gt;/&lt;month&gt;/&lt;series&gt;/</code> are discovered automatically,
+      previews are generated in CI, and originals remain available.
+    </p>
+    <p>
+      Text entries are regular markdown files in <code>src/content/blog/</code>.
+    </p>
+  </section>
+</Layout>

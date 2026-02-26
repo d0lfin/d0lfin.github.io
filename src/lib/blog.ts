@@ -20,7 +20,7 @@ function normalizeTag(tag: string): string {
   return tag.trim();
 }
 
-function slugifyTag(tag: string): string {
+export function toTagSlug(tag: string): string {
   return tag
     .trim()
     .toLowerCase()
@@ -63,7 +63,7 @@ export function getTagGroups(posts: BlogPost[]): BlogTagGroup[] {
       if (!normalized) {
         continue;
       }
-      const slug = slugifyTag(normalized);
+      const slug = toTagSlug(normalized);
       if (!slug) {
         continue;
       }

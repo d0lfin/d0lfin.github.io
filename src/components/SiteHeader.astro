@@ -1,0 +1,41 @@
+---
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+const navItems: NavItem[] = [
+  { href: "/", label: "Home" },
+  { href: "/gallery/", label: "Gallery" },
+  { href: "/blog/", label: "Journal" },
+  { href: "/about/", label: "About" },
+];
+
+function isActive(href: string): boolean {
+  if (href === "/") {
+    return currentPath === "/";
+  }
+  return currentPath.startsWith(href);
+}
+---
+
+<header class="site-header" data-animate>
+  <a class="brand" href="/">
+    <span class="brand-top">Alexey Emelin</span>
+    <span class="brand-bottom">blog</span>
+  </a>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    {navItems.map((item) => (
+      <a class={`nav-link ${isActive(item.href) ? "is-active" : ""}`} href={item.href}>
+        {item.label}
+      </a>
+    ))}
+  </nav>
+</header>

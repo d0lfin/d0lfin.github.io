@@ -10,79 +10,142 @@ export async function getStaticPaths() {
   }));
 }
 
+function formatCapturedAt(value?: string): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value.slice(0, 10);
+  }
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+}
+
 const { photo } = Astro.props;
 const photos = getAllPhotos();
 const currentIndex = photos.findIndex((item) => item.slug === photo.slug);
 const newerPhoto = currentIndex > 0 ? photos[currentIndex - 1] : undefined;
-const olderPhoto = currentIndex >= 0 && currentIndex < photos.length - 1 ? photos[currentIndex + 1] : undefined;
+const olderPhoto =
+  currentIndex >= 0 && currentIndex < photos.length - 1 ? photos[currentIndex + 1] : undefined;
+
 const cameraLabel = [photo.cameraMake, photo.cameraModel].filter(Boolean).join(" ");
-const hasExifMetadata = Boolean(photo.capturedAt || cameraLabel || photo.lensModel);
+const capturedAtLabel = formatCapturedAt(photo.capturedAt);
+const metadata = [
+  { label: "Captured", value: capturedAtLabel },
+  { label: "Camera", value: cameraLabel },
+  { label: "Lens", value: photo.lensModel },
+  { label: "File", value: photo.relativePath },
+].filter((item) => Boolean(item.value));
 ---
 
 <Layout
-  pageTitle={`${photo.title} | Photo`}
-  description={photo.description ?? `Photo from ${photo.seriesLabel}`}
+  pageTitle={`${photo.title} | Gallery | Alexey Emelin`}
+  description={photo.description ?? `${photo.seriesLabel} entry`}
   canonicalPath={`/photo/${photo.slug}/`}
   ogImage={photo.previewSrc ?? photo.src}
   ogType="article"
 >
-  <p>
-    <a href="/">Home</a>
-    {" • "}
-    <a href="/gallery/">Gallery</a>
-    {" • "}
-    <a href={`/gallery/${photo.seriesSlug}/`}>{photo.seriesLabel}</a>
-  </p>
-  <h1>{photo.title}</h1>
-  <p>{photo.relativePath}</p>
-  {hasExifMetadata && (
-    <ul>
-      {photo.capturedAt && <li>Taken: {photo.capturedAt.slice(0, 10)}</li>}
-      {cameraLabel && <li>Camera: {cameraLabel}</li>}
-      {photo.lensModel && <li>Lens: {photo.lensModel}</li>}
-    </ul>
-  )}
+  <article>
+    <section class="page-intro card-panel" data-animate>
+      <p class="breadcrumbs">
+        <a href="/">Home</a>
+        <span>/</span>
+        <a href="/gallery/">Gallery</a>
+        <span>/</span>
+        <a href={`/gallery/${photo.seriesSlug}/`}>{photo.seriesLabel}</a>
+      </p>
+      <p class="page-kicker">Entry</p>
+      <h1>{photo.title}</h1>
+      <p class="page-lead">{photo.description ?? ""}</p>
+      {metadata.length > 0 && (
+        <dl class="meta-table">
+          {metadata.map((item) => (
+            <>
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
+            </>
+          ))}
+        </dl>
+      )}
+    </section>
 
-  <figure>
-    <a href={photo.src} target="_blank" rel="noreferrer">
-      <img
-        src={photo.previewSrc ?? photo.src}
-        alt={photo.description ?? photo.title}
-        loading="eager"
-        decoding="async"
-      />
-    </a>
-  </figure>
+    <figure class="photo-frame card-panel" data-animate>
+      <a href={photo.src} target="_blank" rel="noreferrer" aria-label="Open original file in new tab">
+        <img
+          src={photo.previewSrc ?? photo.src}
+          alt={photo.description ?? photo.title}
+          loading="eager"
+          decoding="async"
+        />
+      </a>
+      <figcaption class="meta-line">
+        <a href={photo.src} download>Download original</a>
+        <span>•</span>
+        <a href={photo.src} target="_blank" rel="noreferrer">Open full size</a>
+      </figcaption>
+    </figure>
 
-  {photo.description && <p>{photo.description}</p>}
-  <p>
-    <a href={photo.src} download>Download original</a>
-    {" • "}
-    <a href={photo.src} target="_blank" rel="noreferrer">Open original</a>
-  </p>
-
-  <nav class="pager">
-    <span>{newerPhoto ? <a href={`/photo/${newerPhoto.slug}/`}>← Newer</a> : "← Newer"}</span>
-    <span>{olderPhoto ? <a href={`/photo/${olderPhoto.slug}/`}>Older →</a> : "Older →"}</span>
-  </nav>
+    <nav class="pager" data-animate aria-label="Photo navigation">
+      {newerPhoto ? (
+        <a class="chip" href={`/photo/${newerPhoto.slug}/`}>← Newer</a>
+      ) : (
+        <span class="chip is-disabled">← Newer</span>
+      )}
+      {olderPhoto ? (
+        <a class="chip" href={`/photo/${olderPhoto.slug}/`}>Older →</a>
+      ) : (
+        <span class="chip is-disabled">Older →</span>
+      )}
+    </nav>
+  </article>
 </Layout>
 
 <style>
-  figure {
-    margin: 0 0 16px;
+  .photo-frame {
+    display: grid;
+    gap: 10px;
+    padding: 10px;
   }
 
-  img {
+  .photo-frame img {
     width: 100%;
-    max-width: 900px;
-    border-radius: 10px;
+    max-height: min(84vh, 980px);
+    object-fit: contain;
+    border-radius: var(--radius-md);
     display: block;
+    background: var(--paper-soft);
   }
 
-  .pager {
-    margin-top: 28px;
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
+  .meta-table {
+    margin: 12px 0 0;
+    display: grid;
+    grid-template-columns: minmax(80px, 120px) 1fr;
+    gap: 6px 12px;
+    align-items: baseline;
+    font-size: 0.9rem;
+  }
+
+  .meta-table dt {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    margin: 0;
+  }
+
+  .meta-table dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 640px) {
+    .meta-table {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
   }
 </style>

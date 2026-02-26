@@ -30,48 +30,49 @@ export async function getStaticPaths() {
 const { tagSlug, tagLabel, pageData } = Astro.props;
 ---
 
-<Layout pageTitle={`${tagLabel} Page ${pageData.page} | Blog Tag`} canonicalPath={getTagPageUrl(tagSlug, pageData.page)}>
-  <p>
-    <a href="/">Home</a>
-    {" • "}
-    <a href="/blog/">Blog</a>
-    {" • "}
-    <a href={`/blog/tag/${tagSlug}/`}>Tag {tagLabel}</a>
-  </p>
-  <h1>Tag: {tagLabel}</h1>
-  <p>Page {pageData.page} of {pageData.totalPages}</p>
-
-  <section>
-    {pageData.items.map((post) => (
-      <article>
-        <h2><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h2>
-        <p>{post.data.date.toISOString().slice(0, 10)}</p>
-        <p>{post.data.summary}</p>
-      </article>
-    ))}
+<Layout
+  pageTitle={`${tagLabel} Page ${pageData.page} | Journal Tag | Alexey Emelin`}
+  description={`Entries tagged ${tagLabel}, page ${pageData.page}.`}
+  canonicalPath={getTagPageUrl(tagSlug, pageData.page)}
+>
+  <section class="page-intro card-panel" data-animate>
+    <p class="breadcrumbs">
+      <a href="/">Home</a>
+      <span>/</span>
+      <a href="/blog/">Journal</a>
+      <span>/</span>
+      <a href={`/blog/tag/${tagSlug}/`}>{tagLabel}</a>
+      <span>/</span>
+      <span>Page {pageData.page}</span>
+    </p>
+    <p class="page-kicker">Tag</p>
+    <h1>{tagLabel}</h1>
+    <p class="page-lead">Page {pageData.page} of {pageData.totalPages}.</p>
   </section>
 
-  <nav class="pager">
-    {Array.from({ length: pageData.totalPages }, (_, index) => index + 1).map((page) => (
+  <section class="section-block" data-animate>
+    <div class="mag-list">
+      {pageData.items.map((post) => (
+        <article class="post-card">
+          <h2 class="post-card-title">
+            <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+          </h2>
+          <p class="meta-line">
+            <span>{post.data.date.toISOString().slice(0, 10)}</span>
+          </p>
+          <p>{post.data.summary}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <nav class="pager" data-animate aria-label="Tag pages">
+    {Array.from({ length: pageData.totalPages }, (_, index) => index + 1).map((page) =>
       page === pageData.page ? (
-        <strong>{page}</strong>
+        <span class="chip is-current">{page}</span>
       ) : (
-        <a href={getTagPageUrl(tagSlug, page)}>{page}</a>
-      )
-    ))}
+        <a class="chip" href={getTagPageUrl(tagSlug, page)}>{page}</a>
+      ),
+    )}
   </nav>
 </Layout>
-
-<style>
-  article {
-    margin-bottom: 26px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  .pager {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-</style>

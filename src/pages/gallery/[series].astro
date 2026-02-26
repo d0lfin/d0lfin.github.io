@@ -12,58 +12,56 @@ export async function getStaticPaths() {
 }
 
 const { series } = Astro.props;
-const photos = getAllPhotos().filter((photo) => photo.seriesSlug === series.slug);
+const allPhotos = getAllPhotos();
+const seriesList = getSeriesList(allPhotos);
+const photos = allPhotos.filter((photo) => photo.seriesSlug === series.slug);
 ---
 
-<Layout pageTitle={`${series.label} | Gallery`} canonicalPath={`/gallery/${series.slug}/`}>
-  <p>
-    <a href="/">Home</a>
-    {" • "}
-    <a href="/gallery/">All Gallery</a>
-  </p>
-  <h1>{series.label}</h1>
-  <p>{series.count} photo(s)</p>
+<Layout
+  pageTitle={`${series.label} | Gallery | Alexey Emelin`}
+  description={`${series.count} items in ${series.label}.`}
+  canonicalPath={`/gallery/${series.slug}/`}
+>
+  <section class="page-intro card-panel" data-animate>
+    <p class="breadcrumbs">
+      <a href="/">Home</a>
+      <span>/</span>
+      <a href="/gallery/">Gallery</a>
+      <span>/</span>
+      <span>{series.label}</span>
+    </p>
+    <p class="page-kicker">Series</p>
+    <h1>{series.label}</h1>
+    <p class="page-lead">{series.count} item(s) in this series.</p>
+    <div class="chip-row">
+      {seriesList.map((item) => (
+        <a class={`chip ${item.slug === series.slug ? "is-current" : ""}`} href={`/gallery/${item.slug}/`}>
+          {item.label}
+        </a>
+      ))}
+    </div>
+  </section>
 
-  <div class="grid">
-    {photos.map((photo) => (
-      <a class="card" href={`/photo/${photo.slug}/`}>
-        <img
-          src={photo.previewSrc ?? photo.src}
-          alt={photo.description ?? photo.title}
-          loading="lazy"
-          decoding="async"
-        />
-        <span>{photo.title}</span>
-      </a>
-    ))}
-  </div>
+  <section class="section-block" data-animate>
+    <div class="section-head">
+      <h2>All Items</h2>
+      <p class="meta-line"><a href="/gallery/">Back to all series</a></p>
+    </div>
+    <div class="mag-grid">
+      {photos.map((photo) => (
+        <a class="photo-card" href={`/photo/${photo.slug}/`}>
+          <img
+            src={photo.previewSrc ?? photo.src}
+            alt={photo.description ?? photo.title}
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="photo-card-title">{photo.title}</span>
+          <span class="meta-line">
+            <span>{photo.capturedAt ? photo.capturedAt.slice(0, 10) : photo.relativePath}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
 </Layout>
-
-<style>
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .card {
-    color: inherit;
-    text-decoration: none;
-    display: block;
-  }
-
-  .card img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 8px;
-    display: block;
-  }
-
-  .card span {
-    display: block;
-    margin-top: 6px;
-    font-size: 14px;
-  }
-</style>

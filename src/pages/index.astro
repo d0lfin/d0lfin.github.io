@@ -9,41 +9,68 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
 );
 ---
 
-<Layout pageTitle="Home | d0lfin photo blog" canonicalPath="/">
-	<h1>d0lfin photo blog</h1>
-	<p>Drop files into <code>public/photos/...</code> and they are published automatically.</p>
-	<p><a href="/gallery/">Open gallery</a></p>
-
-	<section>
-		<h2>Latest Photos</h2>
-		<ul>
-			{
-				photos.slice(0, 8).map((photo) => (
-					<li>
-						<a href={`/photo/${photo.slug}/`}>{photo.title}</a>
-						{" • "}
-						<small>{photo.capturedAt ? photo.capturedAt.slice(0, 10) : photo.relativePath}</small>
-						{" • "}
-						<small><a href={`/gallery/${photo.seriesSlug}/`}>{photo.seriesLabel}</a></small>
-					</li>
-				))
-			}
-		</ul>
+<Layout pageTitle="Home | Alexey Emelin" canonicalPath="/">
+	<section class="page-intro card-panel" data-animate>
+		<p class="page-kicker">Alexey Emelin</p>
+		<h1>A light personal blog in a magazine rhythm.</h1>
+		<p class="page-lead">
+			Visual updates and short notes, published straight from the repository with minimal ceremony.
+		</p>
+		<p class="meta-line">
+			<span>Content-first, file-based workflow</span>
+			<span>•</span>
+			<a href="/gallery/">Open gallery archive</a>
+		</p>
 	</section>
 
-	<section>
-		<h2>Latest Blog Notes</h2>
-		<p><a href="/blog/">Open blog</a></p>
-		<ul>
+	<section class="section-block" data-animate>
+		<div class="section-head">
+			<h2>Latest In Gallery</h2>
+			<p class="meta-line"><span>{photos.length}</span><span>items</span></p>
+		</div>
+		<div class="mag-grid">
 			{
-				posts.map((post) => (
-					<li>
-						<a href={`/blog/${post.slug}/`}>{post.data.title}</a>
-						{" • "}
-						<small>{post.data.date.toISOString().slice(0, 10)}</small>
-					</li>
+				photos.slice(0, 10).map((photo) => (
+					<a class="photo-card" href={`/photo/${photo.slug}/`}>
+						<img
+							src={photo.previewSrc ?? photo.src}
+							alt={photo.description ?? photo.title}
+							loading="lazy"
+							decoding="async"
+						/>
+						<span class="photo-card-title">{photo.title}</span>
+						<span class="meta-line">
+							<span>{photo.capturedAt ? photo.capturedAt.slice(0, 10) : photo.relativePath}</span>
+							<span>•</span>
+							<span>{photo.seriesLabel}</span>
+						</span>
+					</a>
 				))
 			}
-		</ul>
+		</div>
+	</section>
+
+	<section class="section-block" data-animate>
+		<div class="section-head">
+			<h2>Latest Journal Entries</h2>
+			<p class="meta-line"><a href="/blog/">Open full journal</a></p>
+		</div>
+		<div class="mag-list">
+			{
+				posts.slice(0, 4).map((post) => (
+					<article class="post-card">
+						<h3 class="post-card-title">
+							<a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+						</h3>
+						<p class="meta-line">
+							<span>{post.data.date.toISOString().slice(0, 10)}</span>
+							<span>•</span>
+							<span>{post.data.tags.join(", ")}</span>
+						</p>
+						<p>{post.data.summary}</p>
+					</article>
+				))
+			}
+		</div>
 	</section>
 </Layout>

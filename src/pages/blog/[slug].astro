@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import { toTagSlug } from "../../lib/blog";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
@@ -15,44 +16,62 @@ const { Content } = await entry.render();
 ---
 
 <Layout
-  pageTitle={`${entry.data.title} | Blog`}
+  pageTitle={`${entry.data.title} | Journal | Alexey Emelin`}
   description={entry.data.summary}
   canonicalPath={`/blog/${entry.slug}/`}
   ogImage={entry.data.hero}
   ogType="article"
 >
-  <p>
-    <a href="/">Home</a>
-    {" • "}
-    <a href="/blog/">Blog</a>
-  </p>
-  <h1>{entry.data.title}</h1>
-  <p>{entry.data.date.toISOString().slice(0, 10)}</p>
-  <p>{entry.data.summary}</p>
-  {entry.data.tags.length > 0 && (
-    <p>
-      {entry.data.tags.map((tag, index) => (
-        <>
-          {index > 0 && " • "}
-          <a href={`/blog/tag/${tag.toLowerCase().replace(/[^a-z0-9]+/g, "-")}/`}>{tag}</a>
-        </>
-      ))}
-    </p>
-  )}
+  <article>
+    <section class="page-intro card-panel" data-animate>
+      <p class="breadcrumbs">
+        <a href="/">Home</a>
+        <span>/</span>
+        <a href="/blog/">Journal</a>
+      </p>
+      <p class="page-kicker">Entry</p>
+      <h1>{entry.data.title}</h1>
+      <p class="page-lead">{entry.data.summary}</p>
+      <p class="meta-line">
+        <span>{entry.data.date.toISOString().slice(0, 10)}</span>
+        {entry.data.tags.length > 0 && (
+          <>
+            <span>•</span>
+            <span>{entry.data.tags.length} tag(s)</span>
+          </>
+        )}
+      </p>
+      {entry.data.tags.length > 0 && (
+        <div class="chip-row">
+          {entry.data.tags.map((tag) => (
+            <a class="chip" href={`/blog/tag/${toTagSlug(tag)}/`}>
+              {tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
 
-  {entry.data.hero && (
-    <p>
-      <img src={entry.data.hero} alt={entry.data.title} loading="lazy" decoding="async" />
-    </p>
-  )}
+    {entry.data.hero && (
+      <figure class="post-hero card-panel" data-animate>
+        <img src={entry.data.hero} alt={entry.data.title} loading="eager" decoding="async" />
+      </figure>
+    )}
 
-  <Content />
+    <section class="card-panel prose" data-animate>
+      <Content />
+    </section>
+  </article>
 </Layout>
 
 <style>
-  img {
+  .post-hero {
+    padding: 10px;
+  }
+
+  .post-hero img {
     width: 100%;
-    max-width: 900px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
+    display: block;
   }
 </style>

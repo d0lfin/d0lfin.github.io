@@ -30,9 +30,9 @@ export const GET: APIRoute = async ({ site }) => {
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>` +
     `<rss version="2.0"><channel>` +
-    `<title>d0lfin photo blog</title>` +
+    `<title>Alexey Emelin</title>` +
     `<link>${siteLink}</link>` +
-    `<description>Photo-first personal site with occasional blog notes.</description>` +
+    `<description>Personal blog and gallery.</description>` +
     `<atom:link href="${feedUrl}" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom" />` +
     items +
     `</channel></rss>`;

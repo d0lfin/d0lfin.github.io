@@ -1,6 +1,12 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import { getBlogPageUrl, getPublishedPosts, getTagGroups, paginatePosts } from "../../../lib/blog";
+import {
+  getBlogPageUrl,
+  getPublishedPosts,
+  getTagGroups,
+  paginatePosts,
+  toTagSlug,
+} from "../../../lib/blog";
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
@@ -15,67 +21,67 @@ const { pageData } = Astro.props;
 const tags = getTagGroups(await getPublishedPosts());
 ---
 
-<Layout pageTitle={`Blog Page ${pageData.page} | d0lfin photo blog`} canonicalPath={getBlogPageUrl(pageData.page)}>
-  <p>
-    <a href="/">Home</a>
-    {" • "}
-    <a href="/blog/">Blog</a>
-  </p>
-  <h1>Blog</h1>
-  <p>Page {pageData.page} of {pageData.totalPages}</p>
-
-  {tags.length > 0 && (
-    <p>
-      Tags:
-      {" "}
-      {tags.map((tag, index) => (
-        <>
-          {index > 0 && " • "}
-          <a href={`/blog/tag/${tag.slug}/`}>{tag.label}</a>
-        </>
-      ))}
+<Layout
+  pageTitle={`Journal Page ${pageData.page} | Alexey Emelin`}
+  description={`Journal page ${pageData.page}`}
+  canonicalPath={getBlogPageUrl(pageData.page)}
+>
+  <section class="page-intro card-panel" data-animate>
+    <p class="breadcrumbs">
+      <a href="/">Home</a>
+      <span>/</span>
+      <a href="/blog/">Journal</a>
+      <span>/</span>
+      <span>Page {pageData.page}</span>
     </p>
-  )}
-
-  <section>
-    {pageData.items.map((post) => (
-      <article>
-        <h2><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h2>
-        <p>{post.data.date.toISOString().slice(0, 10)}</p>
-        <p>{post.data.summary}</p>
-        <p>
-          {post.data.tags.map((tag, index) => (
-            <>
-              {index > 0 && " • "}
-              <a href={`/blog/tag/${tag.toLowerCase().replace(/[^a-z0-9]+/g, "-")}/`}>{tag}</a>
-            </>
-          ))}
-        </p>
-      </article>
-    ))}
+    <p class="page-kicker">Journal</p>
+    <h1>Notes</h1>
+    <p class="page-lead">Page {pageData.page} of {pageData.totalPages}.</p>
+    {tags.length > 0 && (
+      <div class="chip-row">
+        {tags.map((tag) => (
+          <a class="chip" href={`/blog/tag/${tag.slug}/`}>
+            {tag.label}
+          </a>
+        ))}
+      </div>
+    )}
   </section>
 
-  <nav class="pager">
-    {Array.from({ length: pageData.totalPages }, (_, index) => index + 1).map((page) => (
+  <section class="section-block" data-animate>
+    <div class="mag-list">
+      {pageData.items.map((post) => (
+        <article class="post-card">
+          <h2 class="post-card-title">
+            <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
+          </h2>
+          <p class="meta-line">
+            <span>{post.data.date.toISOString().slice(0, 10)}</span>
+            <span>•</span>
+            <span>{post.data.tags.length} tag(s)</span>
+          </p>
+          <p>{post.data.summary}</p>
+          {post.data.tags.length > 0 && (
+            <p class="chip-row">
+              {post.data.tags.map((tag) => (
+                <a class="chip" href={`/blog/tag/${toTagSlug(tag)}/`}>
+                  {tag}
+                </a>
+              ))}
+            </p>
+          )}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <nav class="pager" data-animate aria-label="Journal pages">
+    {Array.from({ length: pageData.totalPages }, (_, index) => index + 1).map((page) =>
       page === pageData.page ? (
-        <strong>{page}</strong>
+        <span class="chip is-current">{page}</span>
       ) : (
-        <a href={getBlogPageUrl(page)}>{page}</a>
-      )
-    ))}
+        <a class="chip" href={getBlogPageUrl(page)}>{page}</a>
+      ),
+    )}
   </nav>
 </Layout>
-
-<style>
-  article {
-    margin-bottom: 26px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  .pager {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-</style>
