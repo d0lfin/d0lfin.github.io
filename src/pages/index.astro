@@ -12,16 +12,19 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
 <Layout pageTitle="Home | d0lfin photo blog">
 	<h1>d0lfin photo blog</h1>
 	<p>Drop files into <code>public/photos/...</code> and they are published automatically.</p>
+	<p><a href="/gallery/">Open gallery</a></p>
 
 	<section>
 		<h2>Latest Photos</h2>
 		<ul>
 			{
-				photos.map((photo) => (
+				photos.slice(0, 8).map((photo) => (
 					<li>
 						<a href={`/photo/${photo.slug}/`}>{photo.title}</a>
 						{" • "}
 						<small>{photo.capturedAt ? photo.capturedAt.slice(0, 10) : photo.relativePath}</small>
+						{" • "}
+						<small><a href={`/gallery/${photo.seriesSlug}/`}>{photo.seriesLabel}</a></small>
 					</li>
 				))
 			}

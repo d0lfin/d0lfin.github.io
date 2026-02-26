@@ -33,6 +33,8 @@ export interface PhotoItem {
   src: string;
   relativePath: string;
   title: string;
+  seriesSlug: string;
+  seriesLabel: string;
   description?: string;
   previewSrc?: string;
   capturedAt?: string;
@@ -41,6 +43,13 @@ export interface PhotoItem {
   lensModel?: string;
   year?: number;
   month?: number;
+}
+
+export interface PhotoSeriesItem {
+  slug: string;
+  label: string;
+  count: number;
+  coverPhoto: PhotoItem;
 }
 
 function walkFiles(dir: string): string[] {
@@ -156,6 +165,39 @@ function titleFromRelativePath(relativePath: string): string {
     .join(" ");
 }
 
+function labelFromPathSegment(value: string): string {
+  return value
+    .split(/[-_]+/)
+    .filter(Boolean)
+    .map((chunk) => `${chunk[0]?.toUpperCase() ?? ""}${chunk.slice(1)}`)
+    .join(" ");
+}
+
+function slugFromPathSegment(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function parseSeries(relativePath: string): { seriesSlug: string; seriesLabel: string } {
+  const parts = relativePath.split("/").filter(Boolean);
+  const hasDatePrefix =
+    parts.length >= 4 && /^\d{4}$/.test(parts[0] ?? "") && /^\d{2}$/.test(parts[1] ?? "");
+
+  let seriesParts = hasDatePrefix ? parts.slice(2, -1) : parts.slice(0, -1);
+  if (seriesParts.length === 0) {
+    seriesParts = ["misc"];
+  }
+
+  const label = seriesParts.map(labelFromPathSegment).join(" / ");
+  const slug = seriesParts.map(slugFromPathSegment).filter(Boolean).join("--") || "misc";
+  return {
+    seriesSlug: slug,
+    seriesLabel: label,
+  };
+}
+
 function parsePathDate(relativePath: string): { year?: number; month?: number } {
   const parts = relativePath.split(path.sep);
   if (parts.length < 2) {
@@ -200,12 +242,15 @@ export function getAllPhotos(): PhotoItem[] {
       const normalizedRelativePath = relativePath.split(path.sep).join("/");
       const src = `/photos/${normalizedRelativePath}`;
       const { year, month } = parsePathDate(relativePath);
+      const { seriesSlug, seriesLabel } = parseSeries(normalizedRelativePath);
       const generatedMetadata = generatedMetadataMap.get(src);
       return {
         slug: slugFromRelativePath(normalizedRelativePath),
         src,
         relativePath: normalizedRelativePath,
         title: titleFromRelativePath(normalizedRelativePath),
+        seriesSlug,
+        seriesLabel,
         description: generatedMetadata?.description ?? descriptionMap.get(src),
         previewSrc: generatedMetadata?.previewSrc,
         capturedAt: generatedMetadata?.capturedAt,
@@ -226,4 +271,24 @@ export function getAllPhotos(): PhotoItem[] {
   });
 
   return photos;
+}
+
+export function getSeriesList(photos: PhotoItem[] = getAllPhotos()): PhotoSeriesItem[] {
+  const seriesBySlug = new Map<string, PhotoSeriesItem>();
+
+  for (const photo of photos) {
+    const existing = seriesBySlug.get(photo.seriesSlug);
+    if (existing) {
+      existing.count += 1;
+      continue;
+    }
+    seriesBySlug.set(photo.seriesSlug, {
+      slug: photo.seriesSlug,
+      label: photo.seriesLabel,
+      count: 1,
+      coverPhoto: photo,
+    });
+  }
+
+  return Array.from(seriesBySlug.values());
 }

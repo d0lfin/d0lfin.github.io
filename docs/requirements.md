@@ -51,6 +51,7 @@
 - Decision: описание фото опционально и хранится в `public/photos/**/descriptions.json` как маппинг `path -> description`.
 - Decision: дата съемки и камера автоматически извлекаются из EXIF при `build` (локально и в GitHub Actions).
 - Decision: в GitHub Actions есть отдельный шаг генерации превью (сжатие + ресайз) для отображения на сайте, оригиналы сохраняются для скачивания.
+- Decision: посты добавляются напрямую markdown-файлами в `src/content/blog/*.md`, slug формируется из имени файла.
 - TODO/Decision: выбрать точные шрифты (заголовки/текст) и способ их загрузки.
 - TODO/Decision: выбрать акцентный цвет и правила состояний hover/focus/active.
 - TODO/Decision: определить формат URL для фото (`/photo/[slug]` или `/gallery/[slug]`).

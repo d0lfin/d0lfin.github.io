@@ -18,6 +18,28 @@ Photo-first personal site on Astro + MDX.
 - Public photo files: `public/photos/<year>/<month>/<series>/*`
 - Optional description files: `public/photos/**/descriptions.json` (map `path -> description`)
 
+## Blog Add Workflow (Markdown-Only)
+
+Create a markdown file in `src/content/blog/`, for example `my-note.md`:
+
+```md
+---
+title: My Note
+date: 2026-02-26
+tags:
+  - note
+summary: One-line summary for list/SEO.
+draft: false
+hero: /photos/2026/02/baker-beach/dawn-wide.svg
+---
+
+# Heading
+
+Regular markdown content goes here.
+```
+
+Post slug is generated from the filename (`my-note.md` -> `/blog/my-note/`).
+
 ## Photo Add Workflow (Commit-Only)
 
 1. Add photo files into a dated folder structure, for example:

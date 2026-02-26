@@ -1,0 +1,77 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getAllPhotos, getSeriesList } from "../../lib/photos";
+
+const photos = getAllPhotos();
+const seriesList = getSeriesList(photos);
+---
+
+<Layout pageTitle="Gallery | d0lfin photo blog">
+  <p><a href="/">Home</a></p>
+  <h1>Gallery</h1>
+  <p>Filter by series:</p>
+  <ul class="series-list">
+    {seriesList.map((series) => (
+      <li><a href={`/gallery/${series.slug}/`}>{series.label} ({series.count})</a></li>
+    ))}
+  </ul>
+
+  {seriesList.map((series) => (
+    <section id={series.slug}>
+      <h2>{series.label}</h2>
+      <p><a href={`/gallery/${series.slug}/`}>Open series page</a></p>
+      <div class="grid">
+        {photos
+          .filter((photo) => photo.seriesSlug === series.slug)
+          .map((photo) => (
+            <a class="card" href={`/photo/${photo.slug}/`}>
+              <img
+                src={photo.previewSrc ?? photo.src}
+                alt={photo.description ?? photo.title}
+                loading="lazy"
+                decoding="async"
+              />
+              <span>{photo.title}</span>
+            </a>
+          ))}
+      </div>
+    </section>
+  ))}
+</Layout>
+
+<style>
+  .series-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+  }
+
+  .card img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+  }
+
+  .card span {
+    display: block;
+    margin-top: 6px;
+    font-size: 14px;
+  }
+</style>

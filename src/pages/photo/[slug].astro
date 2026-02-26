@@ -11,12 +11,22 @@ export async function getStaticPaths() {
 }
 
 const { photo } = Astro.props;
+const photos = getAllPhotos();
+const currentIndex = photos.findIndex((item) => item.slug === photo.slug);
+const newerPhoto = currentIndex > 0 ? photos[currentIndex - 1] : undefined;
+const olderPhoto = currentIndex >= 0 && currentIndex < photos.length - 1 ? photos[currentIndex + 1] : undefined;
 const cameraLabel = [photo.cameraMake, photo.cameraModel].filter(Boolean).join(" ");
 const hasExifMetadata = Boolean(photo.capturedAt || cameraLabel || photo.lensModel);
 ---
 
 <Layout pageTitle={`${photo.title} | Photo`}>
-  <p><a href="/">Home</a></p>
+  <p>
+    <a href="/">Home</a>
+    {" • "}
+    <a href="/gallery/">Gallery</a>
+    {" • "}
+    <a href={`/gallery/${photo.seriesSlug}/`}>{photo.seriesLabel}</a>
+  </p>
   <h1>{photo.title}</h1>
   <p>{photo.relativePath}</p>
   {hasExifMetadata && (
@@ -44,6 +54,11 @@ const hasExifMetadata = Boolean(photo.capturedAt || cameraLabel || photo.lensMod
     {" • "}
     <a href={photo.src} target="_blank" rel="noreferrer">Open original</a>
   </p>
+
+  <nav class="pager">
+    <span>{newerPhoto ? <a href={`/photo/${newerPhoto.slug}/`}>← Newer</a> : "← Newer"}</span>
+    <span>{olderPhoto ? <a href={`/photo/${olderPhoto.slug}/`}>Older →</a> : "Older →"}</span>
+  </nav>
 </Layout>
 
 <style>
@@ -58,8 +73,10 @@ const hasExifMetadata = Boolean(photo.capturedAt || cameraLabel || photo.lensMod
     display: block;
   }
 
-  figcaption {
-    margin-top: 8px;
-    color: #374151;
+  .pager {
+    margin-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
   }
 </style>

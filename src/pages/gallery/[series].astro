@@ -1,0 +1,69 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getAllPhotos, getSeriesList } from "../../lib/photos";
+
+export async function getStaticPaths() {
+  const photos = getAllPhotos();
+  const seriesList = getSeriesList(photos);
+  return seriesList.map((series) => ({
+    params: { series: series.slug },
+    props: { series },
+  }));
+}
+
+const { series } = Astro.props;
+const photos = getAllPhotos().filter((photo) => photo.seriesSlug === series.slug);
+---
+
+<Layout pageTitle={`${series.label} | Gallery`}>
+  <p>
+    <a href="/">Home</a>
+    {" • "}
+    <a href="/gallery/">All Gallery</a>
+  </p>
+  <h1>{series.label}</h1>
+  <p>{series.count} photo(s)</p>
+
+  <div class="grid">
+    {photos.map((photo) => (
+      <a class="card" href={`/photo/${photo.slug}/`}>
+        <img
+          src={photo.previewSrc ?? photo.src}
+          alt={photo.description ?? photo.title}
+          loading="lazy"
+          decoding="async"
+        />
+        <span>{photo.title}</span>
+      </a>
+    ))}
+  </div>
+</Layout>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+  }
+
+  .card img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+  }
+
+  .card span {
+    display: block;
+    margin-top: 6px;
+    font-size: 14px;
+  }
+</style>
