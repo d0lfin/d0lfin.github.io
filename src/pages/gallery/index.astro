@@ -11,7 +11,7 @@ const seriesList = getSeriesList(photos);
   description="Visual archive grouped by series."
   canonicalPath="/gallery/"
 >
-  <section class="page-intro card-panel" data-animate>
+  <section class="page-intro" data-animate>
     <p class="breadcrumbs">
       <a href="/">Home</a>
       <span>/</span>
@@ -39,12 +39,14 @@ const seriesList = getSeriesList(photos);
     <div class="mag-grid">
       {photos.slice(0, 24).map((photo) => (
         <a class="photo-card" href={`/photo/${photo.slug}/`}>
-          <img
-            src={photo.previewSrc ?? photo.src}
-            alt={photo.description ?? photo.title}
-            loading="lazy"
-            decoding="async"
-          />
+          <div class="photo-card-img-wrapper">
+            <img
+              src={photo.previewSrc ?? photo.src}
+              alt={photo.description ?? photo.title}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <span class="photo-card-title">{photo.title}</span>
           <span class="meta-line">
             <span>{photo.seriesLabel}</span>
@@ -64,12 +66,14 @@ const seriesList = getSeriesList(photos);
     <div class="mag-grid">
       {seriesList.map((series) => (
         <a class="photo-card" href={`/gallery/${series.slug}/`}>
-          <img
-            src={series.coverPhoto.previewSrc ?? series.coverPhoto.src}
-            alt={series.coverPhoto.description ?? series.label}
-            loading="lazy"
-            decoding="async"
-          />
+          <div class="photo-card-img-wrapper">
+            <img
+              src={series.coverPhoto.previewSrc ?? series.coverPhoto.src}
+              alt={series.coverPhoto.description ?? series.label}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <span class="photo-card-title">{series.label}</span>
           <span class="meta-line">
             <span>{series.count} items</span>

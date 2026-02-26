@@ -55,6 +55,17 @@ const pathname = Astro.url.pathname;
 		<meta name="twitter:image" content={resolvedOgImage} />
 		{noIndex && <meta name="robots" content="noindex,nofollow" />}
 		<title>{pageTitle}</title>
+		<script is:inline>
+			const getThemePreference = () => {
+				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+					return localStorage.getItem('theme');
+				}
+				return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+			};
+			const isDark = getThemePreference() === 'dark';
+			document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+		</script>
 	</head>
 	<body>
 		<div class="site-bg"></div>
@@ -70,6 +81,7 @@ const pathname = Astro.url.pathname;
 
 <style is:global>
 	:root {
+		/* Light Theme Colors */
 		--bg: #f4f1e8;
 		--paper: #fffdf8;
 		--paper-soft: #fcf8ef;
@@ -79,6 +91,8 @@ const pathname = Astro.url.pathname;
 		--accent: #2d7669;
 		--accent-soft: #20574f;
 		--shadow-soft: 0 22px 55px rgba(18, 25, 20, 0.08);
+        --hero-gradient: radial-gradient(1300px 540px at 76% -14%, rgba(45, 118, 105, 0.16), transparent 58%), radial-gradient(950px 420px at 2% -4%, rgba(157, 100, 63, 0.15), transparent 62%);
+
 		--radius-lg: 20px;
 		--radius-md: 13px;
 		--radius-sm: 9px;
@@ -86,6 +100,20 @@ const pathname = Astro.url.pathname;
 		color: var(--ink);
 		background: var(--bg);
 	}
+
+    :root[data-theme="dark"] {
+        /* Dark Theme Colors */
+		--bg: #0a0a0a;
+		--paper: #141414;
+		--paper-soft: #1a1a1a;
+		--ink: #e6e6e6;
+		--muted: #a1a1a1;
+		--line: #333333;
+		--accent: #4fb5a3;
+		--accent-soft: #63c9b7;
+		--shadow-soft: 0 22px 55px rgba(0, 0, 0, 0.4);
+        --hero-gradient: radial-gradient(1300px 540px at 76% -14%, rgba(45, 118, 105, 0.25), transparent 58%), radial-gradient(950px 420px at 2% -4%, rgba(157, 100, 63, 0.2), transparent 62%);
+    }
 
 	*,
 	*::before,
@@ -109,15 +137,15 @@ const pathname = Astro.url.pathname;
 		position: fixed;
 		inset: 0;
 		background:
-			radial-gradient(1300px 540px at 76% -14%, rgba(45, 118, 105, 0.16), transparent 58%),
-			radial-gradient(950px 420px at 2% -4%, rgba(157, 100, 63, 0.15), transparent 62%),
+			var(--hero-gradient),
 			repeating-linear-gradient(
 				90deg,
-				rgba(255, 255, 255, 0.05) 0 1px,
-				rgba(255, 255, 255, 0) 1px 13px
+				rgba(128, 128, 128, 0.05) 0 1px,
+				rgba(128, 128, 128, 0) 1px 13px
 			),
 			var(--bg);
 		z-index: -1;
+        transition: background-color 0.4s ease, background-image 0.4s ease;
 	}
 
 	.site-shell {
@@ -127,13 +155,21 @@ const pathname = Astro.url.pathname;
 	}
 
 	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 100;
 		display: flex;
 		flex-wrap: wrap;
-		align-items: baseline;
+		align-items: center;
 		justify-content: space-between;
 		gap: 16px 24px;
-		padding: 8px 0 20px;
-		border-bottom: 1px solid var(--line);
+		padding: 16px 24px;
+		margin: 0 -24px; /* offset shell padding if needed or adjust shell */
+		background: color-mix(in srgb, var(--bg) 80%, transparent);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+		transition: background-color 0.4s ease, border-color 0.4s ease;
 	}
 
 	.brand {
@@ -185,26 +221,25 @@ const pathname = Astro.url.pathname;
 
 	.nav-link.is-active {
 		color: var(--ink);
-		border-color: var(--line);
-		background: rgba(255, 255, 255, 0.54);
+		background: color-mix(in srgb, var(--ink) 8%, transparent);
 	}
 
 	.site-main {
-		padding: clamp(20px, 3.8vw, 48px) 0;
+		padding: clamp(32px, 5vw, 64px) 0;
 	}
 
 	.site-main > * + * {
-		margin-top: clamp(24px, 3.6vw, 40px);
+		margin-top: clamp(40px, 6vw, 64px);
 	}
 
 	.site-footer {
-		padding-top: 22px;
+		padding-top: 32px;
 		border-top: 1px solid var(--line);
 		color: var(--muted);
-		font-size: 0.9rem;
+		font-size: 0.95rem;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 6px 16px;
+		gap: 12px 24px;
 		justify-content: space-between;
 	}
 
@@ -217,25 +252,28 @@ const pathname = Astro.url.pathname;
 	h3,
 	h4 {
 		font-family: "Fraunces", "Times New Roman", serif;
-		letter-spacing: 0.01em;
-		line-height: 1.14;
-		margin: 0 0 0.62em;
+		letter-spacing: -0.02em;
+		line-height: 1.1;
+		margin: 0 0 0.5em;
 	}
 
 	h1 {
-		font-size: clamp(2.05rem, 4.5vw, 3.7rem);
+		font-size: clamp(2.5rem, 6vw, 4.5rem);
+		font-weight: 500;
 	}
 
 	h2 {
-		font-size: clamp(1.5rem, 2.6vw, 2.35rem);
+		font-size: clamp(1.8rem, 4vw, 3rem);
+		font-weight: 500;
 	}
 
 	h3 {
-		font-size: clamp(1.22rem, 1.95vw, 1.6rem);
+		font-size: clamp(1.4rem, 2.5vw, 2rem);
+		font-weight: 500;
 	}
 
 	p {
-		margin: 0 0 1rem;
+		margin: 0 0 1.25rem;
 	}
 
 	a {
@@ -287,21 +325,30 @@ const pathname = Astro.url.pathname;
 	}
 
 	.page-intro {
-		margin-bottom: clamp(18px, 3vw, 34px);
+		margin-bottom: clamp(48px, 8vw, 84px);
+		padding: 24px 0;
+	}
+
+	.page-intro h1 {
+		font-size: clamp(3rem, 10vw, 7rem);
+		line-height: 1.05;
+		margin-bottom: 24px;
 	}
 
 	.page-kicker {
-		font-size: 0.76rem;
-		letter-spacing: 0.17em;
+		font-size: 0.85rem;
+		letter-spacing: 0.2em;
 		text-transform: uppercase;
-		color: var(--muted);
-		margin-bottom: 10px;
+		color: var(--accent);
+		margin-bottom: 16px;
+		font-weight: 600;
 	}
 
 	.page-lead {
-		font-size: clamp(1.06rem, 1.74vw, 1.25rem);
-		max-width: 65ch;
+		font-size: clamp(1.1rem, 2vw, 1.4rem);
+		max-width: 55ch;
 		color: var(--muted);
+		line-height: 1.6;
 	}
 
 	.breadcrumbs {
@@ -328,16 +375,16 @@ const pathname = Astro.url.pathname;
 	}
 
 	.section-block {
-		margin-top: clamp(18px, 3.1vw, 34px);
+		margin-top: clamp(32px, 5vw, 56px);
 	}
 
 	.section-head {
 		display: flex;
 		justify-content: space-between;
-		gap: 10px 16px;
+		gap: 16px 24px;
 		flex-wrap: wrap;
 		align-items: flex-end;
-		margin-bottom: 14px;
+		margin-bottom: 24px;
 	}
 
 	.section-head h2,
@@ -347,49 +394,65 @@ const pathname = Astro.url.pathname;
 
 	.mag-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-		gap: 16px;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 24px;
 	}
 
 	.mag-list {
 		display: grid;
-		gap: 14px;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 24px;
 	}
 
 	.photo-card,
 	.post-card {
-		display: block;
-		background: color-mix(in srgb, var(--paper) 82%, white);
-		border: 1px solid var(--line);
-		border-radius: var(--radius-md);
-		padding: 11px;
+		display: flex;
+		flex-direction: column;
+		background: color-mix(in srgb, var(--paper) 60%, transparent);
+		border: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+		border-radius: var(--radius-lg);
+		padding: 16px;
 		text-decoration: none;
 		color: inherit;
-		transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+		transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.4s ease, background-color 0.4s ease;
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 	}
 
 	.photo-card:hover,
 	.post-card:hover {
-		transform: translateY(-2px);
+		transform: translateY(-4px);
 		box-shadow: var(--shadow-soft);
-		border-color: color-mix(in srgb, var(--line) 68%, var(--accent) 32%);
+		border-color: color-mix(in srgb, var(--line) 80%, var(--accent) 20%);
+		background: color-mix(in srgb, var(--paper) 95%, transparent);
 	}
 
 	.photo-card img {
 		width: 100%;
 		aspect-ratio: 4 / 3;
 		object-fit: cover;
-		border-radius: var(--radius-sm);
+		border-radius: var(--radius-md);
 		display: block;
+		transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+	}
+
+	.photo-card:hover img {
+		transform: scale(1.02);
+	}
+
+	.photo-card-img-wrapper {
+		overflow: hidden;
+		border-radius: var(--radius-md);
 	}
 
 	.photo-card-title,
 	.post-card-title {
 		display: block;
-		margin-top: 9px;
+		margin-top: 16px;
 		font-family: "Fraunces", "Times New Roman", serif;
-		font-size: 1.05rem;
+		font-size: 1.25rem;
 		line-height: 1.2;
+		font-weight: 500;
 	}
 
 	.post-card-title a {

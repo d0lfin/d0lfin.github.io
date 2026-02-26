@@ -22,7 +22,7 @@ const photos = allPhotos.filter((photo) => photo.seriesSlug === series.slug);
   description={`${series.count} items in ${series.label}.`}
   canonicalPath={`/gallery/${series.slug}/`}
 >
-  <section class="page-intro card-panel" data-animate>
+  <section class="page-intro" data-animate>
     <p class="breadcrumbs">
       <a href="/">Home</a>
       <span>/</span>
@@ -50,12 +50,14 @@ const photos = allPhotos.filter((photo) => photo.seriesSlug === series.slug);
     <div class="mag-grid">
       {photos.map((photo) => (
         <a class="photo-card" href={`/photo/${photo.slug}/`}>
-          <img
-            src={photo.previewSrc ?? photo.src}
-            alt={photo.description ?? photo.title}
-            loading="lazy"
-            decoding="async"
-          />
+          <div class="photo-card-img-wrapper">
+            <img
+              src={photo.previewSrc ?? photo.src}
+              alt={photo.description ?? photo.title}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <span class="photo-card-title">{photo.title}</span>
           <span class="meta-line">
             <span>{photo.capturedAt ? photo.capturedAt.slice(0, 10) : photo.relativePath}</span>
